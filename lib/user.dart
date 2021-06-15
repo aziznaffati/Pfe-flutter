@@ -3,29 +3,35 @@ class User {
    final String matriculeUser; 
    final String passUser;
    final String roleUser; 
+   final String email; 
+   final String mat_chef; 
    
-   User(this.matriculeUser, this.passUser, this.roleUser); 
+   User(this.matriculeUser, this.passUser,this.roleUser, this.email,this.mat_chef); 
    factory User.fromMap(Map<String, dynamic> json) { 
       return User( 
          json['matriculeUser'], 
          json['passUser'], 
-         json['roleUser'], 
+         json['roleUser'],
+         json['email'],
+         json['mat_chef'], 
          
       );
    }
 }
 
 class Produit {
-   final String matriculeProduit; 
-   final String typeembalage;
-   final String maxembalage; 
-   
-   Produit(this.matriculeProduit, this.typeembalage, this.maxembalage); 
+   final String nserieProduit; 
+   final int qtestock;
+   final String maxembalageC; 
+   final String maxembalageSH; 
+
+   Produit(this.nserieProduit, this.qtestock, this.maxembalageC,this.maxembalageSH); 
    factory Produit.fromMap(Map<String, dynamic> json) { 
       return Produit( 
-         json['matriculeProduit'], 
-         json['typeembalage'], 
-         json['maxembalage'], 
+         json['nserieProduit'], 
+         json['qtestock'], 
+         json['maxembalageC'], 
+          json['maxembalageSH'], 
          
       );
    }
@@ -33,31 +39,34 @@ class Produit {
 
 class Panne {
    final String matuser; 
-   final String typepanne;
-   final String datePanne; 
+   final String sujetpanne;
+   final String etat; 
    
-   Panne(this.matuser, this.typepanne, this.datePanne); 
+   
+   Panne(this.matuser, this.sujetpanne,this.etat); 
    factory Panne.fromMap(Map<String, dynamic> json) { 
       return Panne( 
          json['mat_user'], 
-         json['type_panne'], 
-         json['datePanne'], 
+         json['sujet_panne'],
+         json['etat'],  
+          
          
       );
    }
 }
 
 class Ligne {
+  final String snPDA; 
    final String designationPDA; 
-   final DateTime dateaffecPDA;
-   final String matuser; 
+  
    
-   Ligne(this.designationPDA, this.dateaffecPDA, this.matuser); 
+   
+   Ligne(this.snPDA,this.designationPDA); 
    factory Ligne.fromMap(Map<String, dynamic> json) { 
       return Ligne( 
+         json['snPDA'], 
          json['designationPDA'], 
-         json['dateaffecPDA'], 
-         json['mat_user'], 
+          
          
       );
    }
@@ -66,13 +75,19 @@ class Ligne {
 class Contenaire {
    final String snC; 
    final String nserieProduit;
+    final int qtechar;
+     final String date;
+      final String heure;
    
    
-   Contenaire(this.snC, this.nserieProduit); 
+   Contenaire(this.snC, this.nserieProduit,this.qtechar,this.date,this.heure); 
    factory Contenaire.fromMap(Map<String, dynamic> json) { 
       return Contenaire( 
          json['snC'], 
-         json['nserie_produit'], 
+         json['nserie_produit'],
+          json['qtechar'],
+           json['date'],
+            json['heure'], 
          
          
       );
@@ -82,24 +97,76 @@ class Contenaire {
 class Chariot {
    final String snC; 
    final String statuChar;
-   final String datechargementChar; 
-   final String datedechargementChar; 
-   final String qteProdChar; 
-   final String nserieProduit;
+  
    
-   Chariot(this.snC, this.statuChar, this.datechargementChar,this.datedechargementChar,this.qteProdChar,this.nserieProduit); 
+   Chariot(this.snC, this.statuChar); 
    factory Chariot.fromMap(Map<String, dynamic> json) { 
       return  Chariot( 
          json['snC'], 
          json['statuChar'], 
-         json['datechargementChar'], 
-         json['datedechargementChar'],
-         json['QteProdChar'],
-         json['nserie_produit'],
+         
          
       );
    }
 }
+
+class Historique {
+   final String matuser; 
+   final String snPDA;
+    final String date;
+      final String heure;
+   
+   Historique(this.matuser, this.snPDA,this.date,this.heure); 
+   factory Historique.fromMap(Map<String, dynamic> json) { 
+      return  Historique( 
+         json['mat_user'], 
+         json['snPDA'], 
+         json['date'], 
+         json['heure'], 
+         
+         
+      );
+   }
+}
+
+class Dechargement {
+   final String snC; 
+   final String snPDA;
+    final String datedechargementChar;
+      final String heuredech;
+   
+   Dechargement(this.snC, this.snPDA,this.datedechargementChar,this.heuredech); 
+   factory Dechargement.fromMap(Map<String, dynamic> json) { 
+      return  Dechargement( 
+         json['snC'], 
+         json['snPDA'], 
+         json['datedechargementChar'], 
+         json['heure_dech'], 
+         
+         
+      );
+   }
+}
+
+class Chargement {
+   final String snC; 
+   final String snPDA;
+    final String datechargementChar;
+      final String heurech;
+   
+   Chargement(this.snC, this.snPDA,this.datechargementChar,this.heurech); 
+   factory Chargement.fromMap(Map<String, dynamic> json) { 
+      return  Chargement( 
+         json['snC'], 
+         json['snPDA'], 
+         json['datechargementChar'], 
+         json['heure_ch'], 
+         
+         
+      );
+   }
+}
+
 
 
 

@@ -20,36 +20,37 @@ class _AddPage extends State<AddPage> {
   DateTime statD = DateTime.now();
   DateTime statM = DateTime.now();
   String selectedRadio;
-  Future<dynamic> submit(sn, type, max,date) async {
+  Future<dynamic> submit(sn, qt, maxc,maxs) async {
     try {
       var result = await http.get(
-          'https://pfeapis.herokuapp.com/produit/$sn',
+          'https://pfeisetz.herokuapp.com/produit/$sn',
           headers: <String, String>{
             'Context-Type': 'application/json;charSet=UTF-8'
           });
           if (result.statusCode == 200) {
-  
-       _showDialog('Numéro de serie Produit existe déja' );
-         }else{
-      var res = await http.post("https://pfeapis.herokuapp.com/produit/",
+            print('resss${result.body}' );
+          if (result.body == 'null') {
+  var res = await http.post("https://pfeisetz.herokuapp.com/produit/",
           headers: <String, String>{
             'Context-Type': 'application/json;charSet=UTF-8'
           },
           body: <String, String>{
             'nserieProduit': sn,
-            'typeembalage': type,
-            'maxembalage': max,
-            'dateajout': date,
+            'qtestock': qt,
+            'maxembalageC': maxc,
+            'maxembalageSH': maxs,
           });
-      print('ffffffffffffffffffffff$type');
-      print('ffffffffffffffffffffff$type');
-      print('ffffffffffffffffffffff$type');
+     
       print(res.body);
       
-       _showDialog('Ajout fait avec Succes');
-      }
-
+       _showDialog('Ajout fait avec Succés');
+      }else{
+_showDialog('Numéro de serie Produit existe déja' );
+          }
       
+         
+          }
+ 
           
     } catch (e) {
       //   print(jsonDecode(e.body)['message']['gtmlhklm']);
@@ -59,9 +60,11 @@ class _AddPage extends State<AddPage> {
   }
   
   final quantite = TextEditingController();
+  final maxembalageC = TextEditingController();
+  final maxembalageSH = TextEditingController();
 
   OverlayEntry overlayEntry;
-  String bar = 'Reference Produit';
+  String bar = 'Numéro de série Produit';
   String barcode = 'Unknown';
   String notif = '';
 
@@ -113,7 +116,7 @@ class _AddPage extends State<AddPage> {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15)),
                 elevation: 25,
-                child: SingleChildScrollView(
+                child:new SingleChildScrollView(
                   child: Container(
                     padding: EdgeInsets.symmetric(
                         horizontal: 20,
@@ -155,46 +158,38 @@ class _AddPage extends State<AddPage> {
                               controller: quantite,
                               decoration: InputDecoration(
                                   fillColor: Color(0xFF2196F3),
-                                  hintText: "Max Embalage"),
+                                  hintText: "Quantité à Stocker"),
                               keyboardType: TextInputType.number,
                               inputFormatters: <TextInputFormatter>[
                                 FilteringTextInputFormatter.digitsOnly
                               ],
                             ),
                           ),
-                          Column(
-                            children: [
-                              Text('Type Embalage'),
-                              Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    ButtonBar(
-                                      alignment: MainAxisAlignment.center,
-                                      children: <Widget>[
-                                        Text("Cartoon"),
-                                        Radio(
-                                          value: 'Cartoon',
-                                          groupValue: selectedRadio,
-                                          activeColor: Colors.blue,
-                                          onChanged: (val) {
-                                            print("Radio $val");
-                                            setSelectedRadio(val);
-                                          },
-                                        ),
-                                        Text("Sachet"),
-                                        Radio(
-                                          value: 'Sachet',
-                                          groupValue: selectedRadio,
-                                          activeColor: Colors.blue,
-                                          onChanged: (val) {
-                                            print("Radio $val");
-                                            setSelectedRadio(val);
-                                          },
-                                        ),
-                                      ],
-                                    )
-                                  ]),
-                            ],
+                          Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: TextFormField(
+                              controller: maxembalageC,
+                              decoration: InputDecoration(
+                                  fillColor: Color(0xFF2196F3),
+                                  hintText: "Max Embalage Cartoon"),
+                              keyboardType: TextInputType.number,
+                              inputFormatters: <TextInputFormatter>[
+                                FilteringTextInputFormatter.digitsOnly
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: TextFormField(
+                              controller: maxembalageSH,
+                              decoration: InputDecoration(
+                                  fillColor: Color(0xFF2196F3),
+                                  hintText: "Max Embalage Sashet"),
+                              keyboardType: TextInputType.number,
+                              inputFormatters: <TextInputFormatter>[
+                                FilteringTextInputFormatter.digitsOnly
+                              ],
+                            ),
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.end,
@@ -202,7 +197,7 @@ class _AddPage extends State<AddPage> {
                               FlatButton(
                                   onPressed: () {
                                     setState(() {
-                                      bar = 'Reference Produit';
+                                      bar = 'Numéro de série Produit';
                                       quantite.text = '';
                                     });
                                   },
@@ -219,7 +214,7 @@ class _AddPage extends State<AddPage> {
                                   onPressed: () {
                                      String todayDate =
                                         today.toString().substring(0, 10);
-                                    submit(bar, selectedRadio, quantite.text,todayDate);
+                                    submit(bar,quantite.text,maxembalageC.text,maxembalageSH.text);
                                   },
                                   elevation: 6,
                                   disabledColor: Colors.grey,

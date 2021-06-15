@@ -10,11 +10,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  String token = prefs.getString("token");
-  print(' token ==> $token ');
+ SharedPreferences prefs = await SharedPreferences.getInstance();
+  String userData = prefs.getString("userData");
+  print(' userData ==> $userData ');
 
-  if (token != null) {
+
+  if (userData != null) {
     // Navigator.push(
     //
     //    context, MaterialPageRoute(builder: (context) => MainPage()));

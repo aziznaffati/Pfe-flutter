@@ -9,69 +9,67 @@ import 'package:month_picker_dialog/month_picker_dialog.dart';
 
 import 'auth/authProvider.dart';
 
-class MisCPage extends StatefulWidget {
+class MiseCPage extends StatefulWidget {
   @override
-  _MisCPage createState() => _MisCPage();
+  _MiseCPage createState() => _MiseCPage();
 }
 
-class _MisCPage extends State<MisCPage> {
+class _MiseCPage extends State<MiseCPage> {
   final dayStat = TextEditingController();
   final monthStat = TextEditingController();
   DateTime statD = DateTime.now();
   DateTime statM = DateTime.now();
   String selectedRadio;
-  Future<dynamic> submit(snc, snp, date) async {
+  Future<dynamic> submit(sn, type, max,date) async {
     try {
       var result = await http.get(
-          'https://pfeisetz.herokuapp.com/contenaire/$snc',
+          'https://pfeisetz.herokuapp.com/produit/$sn',
           headers: <String, String>{
             'Context-Type': 'application/json;charSet=UTF-8'
           });
-      print('resss${result.body}');
-      if (result.body == 'null') {
-        _showDialog("Numéro de serie Chariot n'existe pas");
-      } else {
-        var resulta = await http.get(
-            'https://pfeisetz.herokuapp.com/produit/$snp',
-            headers: <String, String>{
-              'Context-Type': 'application/json;charSet=UTF-8'
-            });
-        print('ressstaaa${resulta.body}');
-        if (resulta.body != 'null') {
-          var res = await http.patch(
-              "https://pfeisetz.herokuapp.com/contenaire/$snc",
-              headers: <String, String>{
-                'Context-Type': 'application/json;charSet=UTF-8'
-              },
-              body: <String, String>{
-                'nserie_produit': snp,
-                'date_mise': date,
-              });
-
-          print(res.body);
-          _showDialog("Mise à jour fait avec Succes");
-        } else {
-          _showDialog("Numéro de serie Produit n'existe pas");
-        }
-      }
-
-      return 'Seccess';
-      //final parsed = json.decode(res.body).cast<Map<String, dynamic>>();
-      //return parsed.map<Product>((json) =>Product.fromJson(json)).toList();
-
+          if (result.statusCode == 200) {
+            print('resss${result.body}' );
+          if (result.body == 'null') {
+  var res = await http.post("https://pfeisetz.herokuapp.com/produit/",
+          headers: <String, String>{
+            'Context-Type': 'application/json;charSet=UTF-8'
+          },
+          body: <String, String>{
+            'nserieProduit': sn,
+            'typeembalage': type,
+            'maxembalage': max,
+            'dateajout': date,
+          });
+      print('ffffffffffffffffffffff$type');
+      print('ffffffffffffffffffffff$type');
+      print('ffffffffffffffffffffff$type');
+      print(res.body);
+      
+       _showDialog('Ajout fait avec Succes');
+      }else{
+_showDialog('Numéro de serie Produit existe déja' );
+          }
+      
+         
+          }
+ 
+          
     } catch (e) {
-      return 'Fail';
+      //   print(jsonDecode(e.body)['message']['gtmlhklm']);
+      _showDialog(e.toString());
+      return null;
     }
   }
-
+  
   final quantite = TextEditingController();
+  final maxembalageC = TextEditingController();
+  final maxembalageSH = TextEditingController();
 
   OverlayEntry overlayEntry;
   String bar = 'Numéro de série Chariot';
-  String bare = 'Numéro de série Produit';
   String barcode = 'Unknown';
   String notif = '';
-
+String statut = 'Chariot Plein';
   Future<String> _showDialog(notif) async => showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -108,7 +106,7 @@ class _MisCPage extends State<MisCPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Mise à jour Contenaire',
+          'Mise à jour Chariot',
           style: TextStyle(
             fontFamily: "ProductSans",
           ),
@@ -135,7 +133,7 @@ class _MisCPage extends State<MisCPage> {
                           Container(
                               alignment: Alignment.center,
                               margin: EdgeInsets.only(bottom: 10),
-                              child: Text("Mise à jour Contenaire",
+                              child: Text("Mise à jour Chariot",
                                   style: TextStyle(
                                       fontSize: 16,
                                       color: Color(0xFF2196F3),
@@ -157,21 +155,15 @@ class _MisCPage extends State<MisCPage> {
                             ],
                           ),
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text(bare),
-                              IconButton(
-                                icon: Icon(Icons.camera_alt_outlined,
-                                    color: Color(0xFF2196F3)),
-                                onPressed: () async {
-                                  String newBare = await scanBarcodeNormal();
-                                  setState(() {
-                                    bare = newBare;
-                                  });
-                                },
-                              ),
+                              
+                                Text(statut),
+                                
+                              
                             ],
                           ),
+                         
                           Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
@@ -179,7 +171,7 @@ class _MisCPage extends State<MisCPage> {
                                   onPressed: () {
                                     setState(() {
                                       bar = 'Numéro de série Chariot';
-                                      bare = 'Numéro de série Produit';
+                                      quantite.text = '';
                                     });
                                   },
                                   textColor: Color(0xFF2196F3),
@@ -193,11 +185,9 @@ class _MisCPage extends State<MisCPage> {
                                   )),
                               RaisedButton(
                                   onPressed: () {
-                                    print(today);
-                                    String todayDate =
+                                     String todayDate =
                                         today.toString().substring(0, 10);
-                                    submit(bar, bare, todayDate);
-                                    print(todayDate);
+                                    submit(bar, selectedRadio, quantite.text,todayDate);
                                   },
                                   elevation: 6,
                                   disabledColor: Colors.grey,
@@ -206,7 +196,7 @@ class _MisCPage extends State<MisCPage> {
                                   padding: EdgeInsets.all(8.0),
                                   splashColor: Color(0xFF2196F3),
                                   child: Text(
-                                    "Mise à jour",
+                                    "Mise à jours",
                                     style: TextStyle(
                                       fontFamily: "ProductSans",
                                     ),

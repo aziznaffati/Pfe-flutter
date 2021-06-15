@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:SagemCom_App/rec_chario.dart';
 import 'package:SagemCom_App/rendement.dart';
+import 'package:SagemCom_App/rendementC.dart';
 import 'package:SagemCom_App/stock-charv.dart';
 import 'package:SagemCom_App/stock_char.dart';
 import 'package:SagemCom_App/user.dart';
@@ -12,10 +14,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
-import 'Miseajourproduit.dart';
-import 'Misecontenaire.dart';
+import 'chargement.dart';
+import 'dechargment.dart';
+import 'listeproduit.dart';
 import 'add contenaire.dart';
-import 'add produit.dart';
 
 class MyApp2 extends StatelessWidget {
   MyApp2({Key key, this.role, this.matricule}) : super(key: key);
@@ -79,14 +81,14 @@ class _MyHomePageState extends State<MyHomePage> {
 // ignore: missing_return
   Future<String> save(String typepanne) async {
     try {
-      var res = await http.post("https://pfeapis.herokuapp.com/panne/",
+      var res = await http.post("https://pfeisetz.herokuapp.com/panne/",
           headers: <String, String>{
             'Context-Type': 'application/json;charSet=UTF-8'
           },
           body: <String, String>{
             'mat_user': widget.matricule,
-            'type_panne': typepanne,
-            'etat':'Non Résolut'
+            'sujet_panne': typepanne,
+            'etat': 'Non Résolut'
           });
       if (res.statusCode == 409) {
         _showDialog('Entrer le type de panne');
@@ -110,7 +112,55 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Panne panne = Panne('', '', '');
 
-  Future recpanne(String role, String matricule) async {
+ 
+  String ligneDescription = '';
+   String lignesnPDA = '';
+  Future getLigne(String matricule) async {
+    try {
+      var res = await http.get(
+        "https://pfeisetz.herokuapp.com/historique/$matricule",
+        headers: <String, String>{
+          'Context-Type': 'application/json;charSet=UTF-8'
+        },
+      );
+      log(res.body);
+      if (res.statusCode == 200) {
+        String description = jsonDecode(res.body)['ligne']['designationPDA'];
+         String pda = jsonDecode(res.body)['ligne']['snPDA'];
+        setState(() {
+          ligneDescription = description;
+          lignesnPDA= pda;
+        });
+      } else {
+        print(res.body);
+        String message = jsonDecode(res.body)['message'];
+      }
+    } catch (e) {
+      //   print(jsonDecode(e.body)['message']['gtmlhklm']);
+      return null;
+    }
+  }
+
+  Map<String, dynamic> userData = {};
+
+  getUserData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    Map<String, dynamic> data = jsonDecode(prefs.getString("userData"));
+    getLigne(data['matriculeUser']);
+    setState(() {
+      userData = data;
+    });
+  }
+
+  Future deconnexion() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.clear();
+    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
+      return Signin();
+    }));
+  }
+
+ Future recpanne(String role, String matricule) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
@@ -123,7 +173,7 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             Container(
               margin: EdgeInsets.all(15),
-              child: Text(role),
+              child: Text(userData['roleUser']),
             ),
             Container(
                 margin: EdgeInsets.all(15),
@@ -161,6 +211,17 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+
+
+
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getUserData();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -170,24 +231,28 @@ class _MyHomePageState extends State<MyHomePage> {
           style: TextStyle(fontFamily: "ProductSans"),
         ),
       ),
-      body: Stack(children: [
-        Center(
-          child: Image.asset('images/logo.png'),
-        ),
-        Container(
-          alignment: Alignment.topCenter,
-          child: Text(
-            "Bienvenu",
-            style: GoogleFonts.pacifico(
-                fontWeight: FontWeight.bold, fontSize: 50, color: Colors.blue),
-          ),
-        )
-      ]),
+      body: 
+         
+           Stack(children: [
+              Center(
+                child: Image.asset('images/logo.png'),
+              ),
+              Container(
+                alignment: Alignment.topCenter,
+                child: Text(
+                  "Bienvenue",
+                  style: GoogleFonts.pacifico(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 50,
+                      color: Colors.blue),
+                ),
+              )
+            ]),
       drawer: Drawer(
-        
         child: ListView(
             padding: EdgeInsets.zero,
-            children: widget.role == 'Ligne1'
+            children: userData['roleUser'] == 'Ouvrier' &&
+                    ligneDescription == 'Ligne1'
                 ? [
                     DrawerHeader(
                         decoration: BoxDecoration(
@@ -198,7 +263,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         child: Image.asset('images/logo.png')),
                     ListTile(
                       title: Text(
-                        "Envoyer Chariot",
+                        "Remplire Chariot",
                         style: TextStyle(
                           fontFamily: "ProductSans",
                         ),
@@ -214,7 +279,23 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                     ListTile(
                       title: Text(
-                        "Les vide Chariots on Stock",
+                        "Chargement Chariot",
+                        style: TextStyle(
+                          fontFamily: "ProductSans",
+                        ),
+                      ),
+                      leading:
+                          Icon(Icons.add_shopping_cart, color: Colors.blue),
+                      onTap: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (BuildContext context) {
+                          return CharPage(snPDA:lignesnPDA);
+                        }));
+                      },
+                    ),
+                    ListTile(
+                      title: Text(
+                        "Les vide Chariots",
                         style: TextStyle(
                           fontFamily: "ProductSans",
                         ),
@@ -239,7 +320,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       onTap: () {
                         Navigator.push(context,
                             MaterialPageRoute(builder: (BuildContext context) {
-                          return RendementPage();
+                          return RendementCPage();
                         }));
                       },
                     ),
@@ -266,20 +347,12 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                       leading: Icon(Icons.logout, color: Colors.blue),
                       onTap: () {
-                        Future deconnexion() async {
-                          final prefs = await SharedPreferences.getInstance();
-                          prefs.clear();
-                          Navigator.push(context, MaterialPageRoute(
-                              builder: (BuildContext context) {
-                            return Signin();
-                          }));
-                        }
-
                         deconnexion();
                       },
                     ),
                   ]
-                : widget.role == 'Ligne2'
+                : userData['roleUser'] == 'Ouvrier' &&
+                        ligneDescription == 'Ligne2'
                     ? [
                         DrawerHeader(
                             decoration: BoxDecoration(
@@ -288,9 +361,10 @@ class _MyHomePageState extends State<MyHomePage> {
                                     bottomLeft: Radius.circular(25),
                                     bottomRight: Radius.circular(25))),
                             child: Image.asset('images/logo.png')),
+                       
                         ListTile(
                           title: Text(
-                            "Rèceptioner Chariot",
+                            "Déchargement Chariot",
                             style: TextStyle(
                               fontFamily: "ProductSans",
                             ),
@@ -300,13 +374,13 @@ class _MyHomePageState extends State<MyHomePage> {
                           onTap: () {
                             Navigator.push(context, MaterialPageRoute(
                                 builder: (BuildContext context) {
-                              return RecPage();
+                              return DCharPage(snPDA:lignesnPDA);
                             }));
                           },
                         ),
                         ListTile(
                           title: Text(
-                            "Les pleins Chariots on Stock",
+                            "Les Chariots On Stock",
                             style: TextStyle(
                               fontFamily: "ProductSans",
                             ),
@@ -359,127 +433,75 @@ class _MyHomePageState extends State<MyHomePage> {
                           ),
                           leading: Icon(Icons.logout, color: Colors.blue),
                           onTap: () {
-                            Future deconnexion() async {
-                              final prefs =
-                                  await SharedPreferences.getInstance();
-                              prefs.clear();
-                              Navigator.push(context, MaterialPageRoute(
-                                  builder: (BuildContext context) {
-                                return Signin();
-                              }));
-                            }
-
                             deconnexion();
                           },
                         ),
                       ]
                     : [
-                            DrawerHeader(
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.only(
-                                        bottomLeft: Radius.circular(25),
-                                        bottomRight: Radius.circular(25))),
-                                child: Image.asset('images/logo.png')),
-                            ListTile(
-                              title: Text(
-                                "Ajout Produit",
-                                style: TextStyle(
-                                  fontFamily: "ProductSans",
-                                ),
-                              ),
-                              leading: Icon(Icons.add, color: Colors.blue),
-                              onTap: () {
-                                Navigator.push(context, MaterialPageRoute(
-                                    builder: (BuildContext context) {
-                                  return AddPage();
-                                }));
-                              },
+                        DrawerHeader(
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.only(
+                                    bottomLeft: Radius.circular(25),
+                                    bottomRight: Radius.circular(25))),
+                            child: Image.asset('images/logo.png')),
+                        ListTile(
+                          title: Text(
+                            "Gérer Produit",
+                            style: TextStyle(
+                              fontFamily: "ProductSans",
                             ),
-                            ListTile(
-                              title: Text(
-                                "Mise à jours Produit",
-                                style: TextStyle(
-                                  fontFamily: "ProductSans",
-                                ),
-                              ),
-                              leading: Icon(Icons.refresh, color: Colors.blue),
-                              onTap: () {
-                                Navigator.push(context, MaterialPageRoute(
-                                    builder: (BuildContext context) {
-                                  return MisPage();
-                                }));
-                              },
-                            ),
-                            ListTile(
-                              title: Text(
-                                "Ajout Contenaire",
-                                style: TextStyle(
-                                  fontFamily: "ProductSans",
-                                ),
-                              ),
-                              leading: Icon(Icons.add, color: Colors.blue),
-                              onTap: () {
-                                Navigator.push(context, MaterialPageRoute(
-                                    builder: (BuildContext context) {
-                                  return AddCPage();
-                                }));
-                              },
-                            ),
-                            ListTile(
-                              title: Text(
-                                "Mise à jours Contenaire",
-                                style: TextStyle(
-                                  fontFamily: "ProductSans",
-                                ),
-                              ),
-                              leading: Icon(Icons.refresh, color: Colors.blue),
-                              onTap: () {
-                                Navigator.push(context, MaterialPageRoute(
-                                    builder: (BuildContext context) {
-                                  return MisCPage();
-                                }));
-                              },
-                            ),
-                            ListTile(
-                              title: Text(
-                                "Panne",
-                                style: TextStyle(
-                                  fontFamily: "ProductSans",
-                                ),
-                              ),
-                              leading: Icon(Icons.settings_outlined,
-                                  color: Colors.blue),
-                              onTap: () {
-                                Navigator.of(context).pop();
-                                recpanne(widget.role, widget.matricule);
-                              },
-                            ),
-                            ListTile(
-                              title: Text(
-                                "Deconnexion",
-                                style: TextStyle(
-                                  fontFamily: "ProductSans",
-                                ),
-                              ),
-                              leading: Icon(Icons.logout, color: Colors.blue),
-                              onTap: () {
-                                Future deconnexion() async {
-                                  final prefs =
-                                      await SharedPreferences.getInstance();
-                                  prefs.clear();
-                                  Navigator.push(context, MaterialPageRoute(
-                                      builder: (BuildContext context) {
-                                    return Signin();
-                                  }));
-                                }
-
-                                deconnexion();
-                              },
-                            ),
-                          ]
-                        
                           ),
+                          leading: Icon(Icons.add, color: Colors.blue),
+                          onTap: () {
+                            Navigator.push(context, MaterialPageRoute(
+                                builder: (BuildContext context) {
+                              return ListPPage();
+                            }));
+                          },
+                        ),
+                        ListTile(
+                          title: Text(
+                            "Gérer Chariot",
+                            style: TextStyle(
+                              fontFamily: "ProductSans",
+                            ),
+                          ),
+                          leading: Icon(Icons.add, color: Colors.blue),
+                          onTap: () {
+                            Navigator.push(context, MaterialPageRoute(
+                                builder: (BuildContext context) {
+                              return AddCPage();
+                            }));
+                          },
+                        ),
+                        ListTile(
+                          title: Text(
+                            "Panne",
+                            style: TextStyle(
+                              fontFamily: "ProductSans",
+                            ),
+                          ),
+                          leading:
+                              Icon(Icons.settings_outlined, color: Colors.blue),
+                          onTap: () {
+                            Navigator.of(context).pop();
+                            recpanne(widget.role, widget.matricule);
+                          },
+                        ),
+                        ListTile(
+                          title: Text(
+                            "Deconnexion",
+                            style: TextStyle(
+                              fontFamily: "ProductSans",
+                            ),
+                          ),
+                          leading: Icon(Icons.logout, color: Colors.blue),
+                          onTap: () {
+                            deconnexion();
+                          },
+                        ),
+                      ]),
       ),
 
       // This trailing comma makes auto-formatting nicer for build methods.

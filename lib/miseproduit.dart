@@ -9,45 +9,48 @@ import 'package:month_picker_dialog/month_picker_dialog.dart';
 
 import 'auth/authProvider.dart';
 
-class MisPage extends StatefulWidget {
+class MisePage extends StatefulWidget {
+  final  String sn;
+  final  int qt;
+  final  String mxc;
+  final  String mxsh;
+MisePage({this.sn,this.qt,this.mxc,this.mxsh});
   @override
-  _MisPage createState() => _MisPage();
+  _MisePage createState() => _MisePage();
 }
 
-class _MisPage extends State<MisPage> {
+class _MisePage extends State<MisePage> {
   final dayStat = TextEditingController();
   final monthStat = TextEditingController();
   DateTime statD = DateTime.now();
   DateTime statM = DateTime.now();
-String selectedRadio;
-   Future<dynamic> upp(sn, type, max,date) async {
+  String selectedRadio;
+  Future<dynamic> submit(sn, qt, maxc,maxsh) async {
     try {
-      var result = await http.get(
-          'https://pfeapis.herokuapp.com/produit/$sn',
-          headers: <String, String>{
-            'Context-Type': 'application/json;charSet=UTF-8'
-          });
-          if (result.statusCode == 404) {
-  _showDialog("Numéro de serie Produit n'existe pas" );
-         }else{
-      var res = await http.patch("https://pfeapis.herokuapp.com/produit/$sn",
+   
+  var res = await http.patch("https://pfeisetz.herokuapp.com/produit/$sn",
           headers: <String, String>{
             'Context-Type': 'application/json;charSet=UTF-8'
           },
           body: <String, String>{
-            'typeembalage': type,
-            'maxembalage': max,
-            'datemise': date,
+            'qtestock': qt,
+            'maxembalageC': maxc,
+            'maxembalageSH': maxsh,
+            
           });
-      print('ffffffffffffffffffffff$type');
-      print('ffffffffffffffffffffff$type');
-      print('ffffffffffffffffffffff$type');
-      
-       _showDialog('Mise à jours fait avec Succes');
-      
-
+     
       print(res.body);
-         } 
+      if (res.statusCode == 200) {
+            print('resss${res.body}' );
+       _showDialog('Mise à jour fait avec Succes');
+      }else{
+_showDialog("Numéro de serie Produit n'existe pas" );
+          }
+      
+         
+          
+ 
+          
     } catch (e) {
       //   print(jsonDecode(e.body)['message']['gtmlhklm']);
       _showDialog(e.toString());
@@ -55,11 +58,12 @@ String selectedRadio;
     }
   }
   
-
   final quantite = TextEditingController();
+  final maxembalageC = TextEditingController();
+  final maxembalageSH = TextEditingController();
 
   OverlayEntry overlayEntry;
-  String bar = 'Reference Produit';
+  String bar = 'Numéro de série Produit';
   String barcode = 'Unknown';
   String notif = '';
 
@@ -81,17 +85,18 @@ String selectedRadio;
           );
         },
       );
-@override
-void initState() {
-  super.initState();
-  selectedRadio = '';
-}
+  @override
+  void initState() {
+    super.initState();
+    selectedRadio = '';
+  }
 
-setSelectedRadio(String val) {
-  setState(() {
-    selectedRadio = val;
-  });
-}
+  setSelectedRadio(String val) {
+    setState(() {
+      selectedRadio = val;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     DateTime today = new DateTime.now();
@@ -110,7 +115,7 @@ setSelectedRadio(String val) {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15)),
                 elevation: 25,
-                child: SingleChildScrollView(
+                child:new SingleChildScrollView(
                   child: Container(
                     padding: EdgeInsets.symmetric(
                         horizontal: 20,
@@ -133,17 +138,8 @@ setSelectedRadio(String val) {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(bar),
-                              IconButton(
-                                icon: Icon(Icons.camera_alt_outlined,
-                                    color: Color(0xFF2196F3)),
-                                onPressed: () async {
-                                  String newBar = await scanBarcodeNormal();
-                                  setState(() {
-                                    bar = newBar;
-                                  });
-                                },
-                              ),
+                              Text('Numéro de série Produit: ${widget.sn}',style: TextStyle(fontSize:16),),
+                              
                             ],
                           ),
                           Padding(
@@ -152,51 +148,38 @@ setSelectedRadio(String val) {
                               controller: quantite,
                               decoration: InputDecoration(
                                   fillColor: Color(0xFF2196F3),
-                                  hintText: "Max Embalage"),
+                                  hintText: "Quantité à Stocker: ${widget.qt}"),
                               keyboardType: TextInputType.number,
                               inputFormatters: <TextInputFormatter>[
                                 FilteringTextInputFormatter.digitsOnly
                               ],
                             ),
                           ),
-                          Column(
-                            children: [
-                               Text('Type Embalage'),
-                                
-                              Row(
-                                 mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                 
-                                ButtonBar(
-                                alignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                 
-                                  Text("Cartoon"),
-                                  Radio(
-                                    
-                                    value: 'Cartoon',
-                                    groupValue: selectedRadio,
-                                    activeColor: Colors.blue,
-                                    onChanged: (val) {
-                                      print("Radio $val");
-                                      setSelectedRadio(val);
-                                    },
-                                  ),
-                                  Text("Sachet"),
-                                  Radio(
-                                    value: 'Sachet',
-                                    groupValue: selectedRadio,
-                                    activeColor: Colors.blue,
-                                    onChanged: (val) {
-                                      print("Radio $val");
-                                      setSelectedRadio(val);
-                                    },
-                                  ),
-                                ],
-                              )
-                                ]
-                              ),
-                            ],
+                          Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: TextFormField(
+                              controller: maxembalageC,
+                              decoration: InputDecoration(
+                                  fillColor: Color(0xFF2196F3),
+                                  hintText: "Max Embalage Cartoon: ${widget.mxc}"),
+                              keyboardType: TextInputType.number,
+                              inputFormatters: <TextInputFormatter>[
+                                FilteringTextInputFormatter.digitsOnly
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: TextFormField(
+                              controller: maxembalageSH,
+                              decoration: InputDecoration(
+                                  fillColor: Color(0xFF2196F3),
+                                  hintText: "Max Embalage Sashet: ${widget.mxsh}"),
+                              keyboardType: TextInputType.number,
+                              inputFormatters: <TextInputFormatter>[
+                                FilteringTextInputFormatter.digitsOnly
+                              ],
+                            ),
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.end,
@@ -204,8 +187,10 @@ setSelectedRadio(String val) {
                               FlatButton(
                                   onPressed: () {
                                     setState(() {
-                                      bar = 'Reference Produit';
+                                      bar = 'Numéro de série Produit';
                                       quantite.text = '';
+                                      maxembalageC.text = '';
+                                      maxembalageSH.text = '';
                                     });
                                   },
                                   textColor: Color(0xFF2196F3),
@@ -219,11 +204,9 @@ setSelectedRadio(String val) {
                                   )),
                               RaisedButton(
                                   onPressed: () {
-                                    print(today);
-                                    String todayDate =
+                                     String todayDate =
                                         today.toString().substring(0, 10);
-                                    upp(bar, selectedRadio, quantite.text,todayDate);
-                                    print(todayDate);
+                                    submit(widget.sn, quantite.text,maxembalageC.text, maxembalageSH.text);
                                   },
                                   elevation: 6,
                                   disabledColor: Colors.grey,

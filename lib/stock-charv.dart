@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 
 import 'package:SagemCom_App/user.dart';
@@ -14,93 +13,77 @@ class GestionStockvPage extends StatefulWidget {
 }
 
 class _GestionStockvPage extends State<GestionStockvPage> {
-
-
-Future<List<Chariot>> save()  async {
-   
-   try {
-        var res = await http.get("https://pfeapis.herokuapp.com/chariot/",
-         headers: <String, String>{
+  Future<List<Chariot>> save() async {
+    try {
+      var res = await http.get(
+        "https://pfeisetz.herokuapp.com/chariot/",
+        headers: <String, String>{
           'Context-Type': 'application/json;charSet=UTF-8'
         },
-       );
-       print(res.body);
+      );
+      print(res.body);
 
- if (res.statusCode == 200) {
-       // If the server did return a 200 OK response,
-       // then parse the JSON.
-       var results = jsonDecode(res.body);
-       
-       List<Chariot> chariots = [];
+      if (res.statusCode == 200) {
+        // If the server did return a 200 OK response,
+        // then parse the JSON.
+        var results = jsonDecode(res.body);
 
-       for (var item in results) {
+        List<Chariot> chariots = [];
 
+        for (var item in results) {
+          // print('podcat == $item');
 
-         // print('podcat == $item');
+          chariots.add(Chariot.fromMap(item));
+        }
 
-       chariots.add(Chariot.fromMap(item));
-       }
-       
-      
-       return chariots;
+        return chariots;
+      } else {
+        String message = jsonDecode(res.body)['message'];
+        _showDialog(message);
+        throw Exception('fail');
+      }
 
- }else{
-  String message = jsonDecode(res.body)['message'];
-    _showDialog(message );
-throw Exception('fail');
- }
-      
+      //    Listtrow<Chariot> chariots = [];
+      //final parsed = json.decode(res.body).cast<Map<String, dynamic>>();
+      //   return parsed.map<Chariot>((json) =>Chariot.fromMap(json)).toList();
 
-
-    //    Listtrow<Chariot> chariots = [];
-           //final parsed = json.decode(res.body).cast<Map<String, dynamic>>(); 
-          //   return parsed.map<Chariot>((json) =>Chariot.fromMap(json)).toList(); 
-
-     } catch (e) {
-       print('Errorrr =>  ${e.toString()}');
-        _showDialog(e.body);
+    } catch (e) {
+      print('Errorrr =>  ${e.toString()}');
+      _showDialog(e.body);
       throw e;
+    }
 
-     }
-   
-    
-   //  Navigator.push(
+    //  Navigator.push(
     //    context, new MaterialPageRoute(builder: (context) => MyApp2()));
-  
-
-}
-Future <dynamic> _showDialog(ress) async => 
-  showDialog(
-    
-      context: context,
-      builder: (BuildContext context) {
-        
-        return AlertDialog(
-          
-          title: new Text("Notification"),
-          content: new Text(ress),
-          actions: <Widget>[
-            // usually buttons at the bottom of the dialog
-            new FlatButton(
-              child: new Text("Close"),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-Future<List<Chariot>> chariots ;
-
-@override
-  void initState()  {
-    // TODO: implement initState
-    super.initState();
-     chariots =  save();
   }
 
-  
+  Future<dynamic> _showDialog(ress) async => showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: new Text("Notification"),
+            content: new Text(ress),
+            actions: <Widget>[
+              // usually buttons at the bottom of the dialog
+              new FlatButton(
+                child: new Text("Close"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+  Future<List<Chariot>> chariots;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    chariots = save();
+  }
+
   @override
   Widget build(BuildContext context) {
     DateTime today = new DateTime.now();
@@ -108,62 +91,92 @@ Future<List<Chariot>> chariots ;
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text(
-          "Gestion des  Vide Chariots",
+          "Gestion des Chariots Vide",
           style: TextStyle(
             fontFamily: "ProductSans",
           ),
         ),
       ),
-         body: Container(
-                  width: MediaQuery.of(context).size.width * 0.9,
-                  height: MediaQuery.of(context).size.height * 0.6,
-                  padding: EdgeInsets.symmetric(horizontal: 8),
-                  margin: EdgeInsets.symmetric(vertical: 15),
-                  alignment: Alignment.center,                
-           child: SingleChildScrollView(
-             child: Column(children: [
-               FutureBuilder<List<Chariot>>(future: chariots, builder: ( context, snapshot){
-                  if (snapshot.hasError) print(snapshot.error); 
-                  if(!snapshot.hasData) return Center(child: CircularProgressIndicator()); 
-                
+      body: Container(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        padding: EdgeInsets.symmetric(horizontal: 8),
+        margin: EdgeInsets.symmetric(vertical: 15),
+        
+        child:new SingleChildScrollView(
+          child: Column(children: [
+            FutureBuilder<List<Chariot>>(
+              future: chariots,
+              builder: (context, snapshot) {
+                if (snapshot.hasError) print(snapshot.error);
+                if (!snapshot.hasData)
+                  return Center(child: CircularProgressIndicator());
+
                 print('snapshot ==>> ${snapshot.data}');
                 String todayDate = today.toString().substring(0, 10);
-                   return  ListView.builder(
-                     shrinkWrap: true,
-             itemCount: snapshot.data.length,
-             itemBuilder: (context, int index) {
-                
-                Chariot chariot = snapshot.data[index];
-                String chariotDate = chariot.datedechargementChar.toString().substring(0,10);
-print('fdgddhghfdfhfdfdhgfd+ ${chariotDate}');
-print('pppppppppppppppppp+ ${todayDate}');
-                if((chariotDate == todayDate)&& (chariot.statuChar=='Chariot Vide') ){
-                    return  Container(
-                  height: 50,
-                  child : Column(children: <Widget> [Text(chariot.snC), Text(chariot.statuChar),]),
-                );
-                }else{
-                  
-                  return SizedBox(height: 0);
-                }
-              
-             },
-                   ); 
-                   
-                   // return the ListView widget : 
-                   
+                return Column(
+                  children: [
+                    Container(
+                        child: Text('Les chariots Vides: ${snapshot.data.length}',
+                            style: TextStyle(
+                              color: Colors.blue,
+                              fontSize: 20,
+                            ))),
+                    SizedBox(height: 15),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: snapshot.data.length,
+                      itemBuilder: (context, int index) {
+                        Chariot chariot = snapshot.data[index];
+                        // String chariotDate = chariot.datechargementChar.toString().substring(0, 10);
 
-               },)
-             ]
-             ),
-           ),
-         ),
-         
-          
-           
-          );
+                        if (chariot != null && chariot.statuChar=='Chariot vide') {
+                          return Container(
+                            // height: 50,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              color: Colors.blueAccent,
+                            ),
+                             padding: EdgeInsets.symmetric(horizontal: 15),
+                            margin: EdgeInsets.only(bottom: 9),
+                            child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text('snc: ${chariot.snC}',
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 20)),
+                                     
+                                    ],
+                                  ),
+                                  SizedBox(height: 15),
+                                  Text('status: ${chariot.statuChar}',
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 20)),
+                                ]),
+                          );
+                        } else {
+                          return SizedBox(height: 0);
+                        }
+                      },
+                    ),
+                  ],
+                );
+
+                // return the ListView widget :
+              },
+            )
+          ]),
+        ),
+      ),
+    );
   }
 }
+
 class StatefulWrapper extends StatefulWidget {
   final Function onInit;
   final Widget child;
@@ -171,14 +184,16 @@ class StatefulWrapper extends StatefulWidget {
   @override
   _StatefulWrapperState createState() => _StatefulWrapperState();
 }
+
 class _StatefulWrapperState extends State<StatefulWrapper> {
-@override
+  @override
   void initState() {
-    if(widget.onInit != null) {
+    if (widget.onInit != null) {
       widget.onInit();
     }
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return widget.child;

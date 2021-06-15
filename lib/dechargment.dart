@@ -9,52 +9,52 @@ import 'package:month_picker_dialog/month_picker_dialog.dart';
 
 import 'auth/authProvider.dart';
 
-class MisCPage extends StatefulWidget {
+class DCharPage extends StatefulWidget {
+final  String snPDA;
+DCharPage({this.snPDA});
   @override
-  _MisCPage createState() => _MisCPage();
+  _DCharPage createState() => _DCharPage();
 }
 
-class _MisCPage extends State<MisCPage> {
+class _DCharPage extends State<DCharPage> {
+  bool _isload1 = false;
+  bool _isload2 = false;
+  bool _isload0 = false;
+  FocusNode _focus0 = FocusNode();
+  FocusNode _focus1 = FocusNode();
   final dayStat = TextEditingController();
   final monthStat = TextEditingController();
   DateTime statD = DateTime.now();
   DateTime statM = DateTime.now();
-  String selectedRadio;
-  Future<dynamic> submit(snc, snp, date) async {
+
+  Future<dynamic> submit(snc, date,heure) async {
     try {
-      var result = await http.get(
-          'https://pfeisetz.herokuapp.com/contenaire/$snc',
+      
+      Map<String, String> body = {
+        'snC': snc,
+        'snPDA': widget.snPDA,
+        'datedechargementChar': date,
+        'heure_dech': heure,
+        
+      };
+
+      print('body ==> $body');
+
+      var res = await http.post("https://pfeisetz.herokuapp.com/dechargement/",
           headers: <String, String>{
             'Context-Type': 'application/json;charSet=UTF-8'
-          });
-      print('resss${result.body}');
-      if (result.body == 'null') {
-        _showDialog("Numéro de serie Chariot n'existe pas");
-      } else {
-        var resulta = await http.get(
-            'https://pfeisetz.herokuapp.com/produit/$snp',
-            headers: <String, String>{
-              'Context-Type': 'application/json;charSet=UTF-8'
-            });
-        print('ressstaaa${resulta.body}');
-        if (resulta.body != 'null') {
-          var res = await http.patch(
-              "https://pfeisetz.herokuapp.com/contenaire/$snc",
-              headers: <String, String>{
-                'Context-Type': 'application/json;charSet=UTF-8'
-              },
-              body: <String, String>{
-                'nserie_produit': snp,
-                'date_mise': date,
-              });
+          },
+          body: body);
 
-          print(res.body);
-          _showDialog("Mise à jour fait avec Succes");
-        } else {
-          _showDialog("Numéro de serie Produit n'existe pas");
-        }
+      print(res.body);
+      if (res.statusCode == 409) {
+        String message = jsonDecode(res.body)['message'];
+        _showDialog(message);
+      } else {
+        _showDialog('Chariot Décharger');
       }
 
+      print(res.body);
       return 'Seccess';
       //final parsed = json.decode(res.body).cast<Map<String, dynamic>>();
       //return parsed.map<Product>((json) =>Product.fromJson(json)).toList();
@@ -64,11 +64,41 @@ class _MisCPage extends State<MisCPage> {
     }
   }
 
+Future<dynamic> subC( snc) async {
+    try {
+      Map<String, dynamic> body = {
+              
+              'statuChar': "Chariot Vide ",
+             
+            };
+var resl = await http.patch(
+                "https://pfeisetz.herokuapp.com/chariot/$snc",
+                headers: <String, String>{
+                  'Context-Type': 'application/json;charSet=UTF-8'
+                }, body: body);
+            print('reslllp ==>${resl.body}');
+            if (resl.statusCode != 200) {
+              String message = jsonDecode(resl.body)['message'];
+              _showDialog(message);
+              return 'fail11';
+            }
+            // print(res.body);
+            return 'Seccess';
+          
+       
+
+
+    } catch (e) {
+      return 'Fail';
+    }
+  }
+
+
+
   final quantite = TextEditingController();
 
   OverlayEntry overlayEntry;
   String bar = 'Numéro de série Chariot';
-  String bare = 'Numéro de série Produit';
   String barcode = 'Unknown';
   String notif = '';
 
@@ -90,17 +120,6 @@ class _MisCPage extends State<MisCPage> {
           );
         },
       );
-  @override
-  void initState() {
-    super.initState();
-    selectedRadio = '';
-  }
-
-  setSelectedRadio(String val) {
-    setState(() {
-      selectedRadio = val;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -108,7 +127,7 @@ class _MisCPage extends State<MisCPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Mise à jour Contenaire',
+          'Déchargement Chariot',
           style: TextStyle(
             fontFamily: "ProductSans",
           ),
@@ -120,7 +139,7 @@ class _MisCPage extends State<MisCPage> {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15)),
                 elevation: 25,
-                child:new SingleChildScrollView(
+                child: new SingleChildScrollView(
                   child: Container(
                     padding: EdgeInsets.symmetric(
                         horizontal: 20,
@@ -135,7 +154,7 @@ class _MisCPage extends State<MisCPage> {
                           Container(
                               alignment: Alignment.center,
                               margin: EdgeInsets.only(bottom: 10),
-                              child: Text("Mise à jour Contenaire",
+                              child: Text("Déchargement Chariot",
                                   style: TextStyle(
                                       fontSize: 16,
                                       color: Color(0xFF2196F3),
@@ -156,22 +175,8 @@ class _MisCPage extends State<MisCPage> {
                               ),
                             ],
                           ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(bare),
-                              IconButton(
-                                icon: Icon(Icons.camera_alt_outlined,
-                                    color: Color(0xFF2196F3)),
-                                onPressed: () async {
-                                  String newBare = await scanBarcodeNormal();
-                                  setState(() {
-                                    bare = newBare;
-                                  });
-                                },
-                              ),
-                            ],
-                          ),
+                         
+                          
                           Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
@@ -179,7 +184,7 @@ class _MisCPage extends State<MisCPage> {
                                   onPressed: () {
                                     setState(() {
                                       bar = 'Numéro de série Chariot';
-                                      bare = 'Numéro de série Produit';
+                                      
                                     });
                                   },
                                   textColor: Color(0xFF2196F3),
@@ -193,11 +198,12 @@ class _MisCPage extends State<MisCPage> {
                                   )),
                               RaisedButton(
                                   onPressed: () {
-                                    print(today);
                                     String todayDate =
                                         today.toString().substring(0, 10);
-                                    submit(bar, bare, todayDate);
-                                    print(todayDate);
+                                        String heure =
+                                        today.toString().substring(11, 16);
+                                  submit(bar, todayDate,heure);
+                                    subC(bar);
                                   },
                                   elevation: 6,
                                   disabledColor: Colors.grey,
@@ -206,7 +212,7 @@ class _MisCPage extends State<MisCPage> {
                                   padding: EdgeInsets.all(8.0),
                                   splashColor: Color(0xFF2196F3),
                                   child: Text(
-                                    "Mise à jour",
+                                    "Déchargement",
                                     style: TextStyle(
                                       fontFamily: "ProductSans",
                                     ),

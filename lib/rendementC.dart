@@ -8,19 +8,19 @@ import 'package:loading_overlay/loading_overlay.dart';
 import 'package:month_picker_dialog/month_picker_dialog.dart';
 import 'package:http/http.dart' as http;
 
-class RendementPage extends StatefulWidget {
-  RendementPage({Key key, this.today, this.typeMonth}) : super(key: key);
+class RendementCPage extends StatefulWidget {
+  RendementCPage({Key key, this.today, this.typeMonth}) : super(key: key);
 
   final String today;
   final bool typeMonth;
 
   @override
   State<StatefulWidget> createState() {
-    return _RendementPage();
+    return _RendementCPage();
   }
 }
 
-class _RendementPage extends State<RendementPage> {
+class _RendementCPage extends State<RendementCPage> {
   bool _isload1 = false;
   bool _isload2 = false;
   bool _isload0 = false;
@@ -33,11 +33,11 @@ class _RendementPage extends State<RendementPage> {
 
 // ignore: missing_return
 
-  Future<List<Dechargement>> dechargements;
-  Future<List<Dechargement>> save() async {
+  Future<List<Chargement>> chargements;
+  Future<List<Chargement>> save() async {
     try {
       var res = await http.get(
-        "https://pfeisetz.herokuapp.com/dechargement/",
+        "https://pfeisetz.herokuapp.com/chargement/",
         headers: <String, String>{
           'Context-Type': 'application/json;charSet=UTF-8'
         },
@@ -49,15 +49,15 @@ class _RendementPage extends State<RendementPage> {
         // then parse the JSON.
         var results = jsonDecode(res.body);
 
-        List<Dechargement> dechargements = [];
+        List<Chargement> chargements = [];
 
         for (var item in results) {
           // print('podcat == $item');
 
-          dechargements.add(Dechargement.fromMap(item));
+          chargements.add(Chargement.fromMap(item));
         }
 
-        return dechargements;
+        return chargements;
       } else {
         throw Exception('fail');
       }
@@ -75,7 +75,7 @@ class _RendementPage extends State<RendementPage> {
 
   @override
   void initState() {
-    dechargements = save();
+    chargements = save();
 
     _changeDay();
     _changeMonth();
@@ -304,8 +304,8 @@ class _RendementPage extends State<RendementPage> {
               Container(
                   height: MediaQuery.of(context).size.height,
                   child: new SingleChildScrollView(
-                      child: FutureBuilder<List<Dechargement>>(
-                    future: dechargements,
+                  child: FutureBuilder<List<Chargement>>(
+                    future: chargements,
                     builder: (context, snapshot) {
                       if (snapshot.hasError) log(snapshot.error);
                       if (!snapshot.hasData)
@@ -320,25 +320,23 @@ class _RendementPage extends State<RendementPage> {
                         shrinkWrap: true,
                         itemCount: snapshot.data.length,
                         itemBuilder: (context, int index) {
-                          Dechargement dechargement = snapshot.data[index];
+                          Chargement chargement = snapshot.data[index];
                           // log('calendar type ==> $calendarType');
-                          log('chargement date ==> ${dechargement.datedechargementChar}');
-                         
+                          log('chargement date ==> ${chargement.datechargementChar}');
+
                           // log('ch dat 0--10 type ==> ${chargement.datechargementChar.toString().substring(0, 10)}');
                           String chargementDate = calendarType
-                              ? dechargement.datedechargementChar
-                                  .substring(0, 10)
-                              : dechargement.datedechargementChar
-                                  .substring(0, 7);
+                              ? chargement.datechargementChar.substring(0, 10)
+                              : chargement.datechargementChar.substring(0, 7);
                           // String ch = chargement.datechargementChar;
                           // print('datechargementChar ==> $ch');
                           log('testdate ==> $testDate');
                           log('chargementDate ==> ${chargementDate.substring(0, testDate.length)}');
-
+                         
                           if (chargementDate == testDate) {
-                            print('chariot snc ==> ${dechargement.snC}');
+                            print('chariot snc ==> ${chargement.snC}');
 
-                            if (dechargements != null) {
+                            if (chargements != null) {
                               return Container(
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(20),
@@ -351,22 +349,22 @@ class _RendementPage extends State<RendementPage> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                          'Num de serie Chariot: ${dechargement.snC}',
+                                          'Num de serie Chariot: ${chargement.snC}',
                                           style: TextStyle(
                                               color: Colors.white,
                                               fontSize: 20)),
                                       Text(
-                                          'Num de serie PDA: ${dechargement.snPDA}',
+                                          'Num de serie PDA: ${chargement.snPDA}',
                                           style: TextStyle(
                                               color: Colors.white,
                                               fontSize: 20)),
                                       Text(
-                                          'Date Chargement Chariot: ${dechargement.datedechargementChar.substring(0, 10)}',
+                                          'Date Chargement Chariot: ${chargement.datechargementChar.substring(0, 10)}',
                                           style: TextStyle(
                                               color: Colors.white,
                                               fontSize: 20)),
                                       Text(
-                                          'Heure Chargement Chariot: ${dechargement.heuredech}',
+                                          'Heure Chargement Chariot: ${chargement.heurech}',
                                           style: TextStyle(
                                               color: Colors.white,
                                               fontSize: 20)),
@@ -381,8 +379,113 @@ class _RendementPage extends State<RendementPage> {
 
                       // return the ListView widget :
                     },
-                  )))
+              )))
             ]))));
   } // This trailing comma makes auto-formatting nicer for build methods.
 
 }
+
+// class GetChargement extends StatefulWidget {
+//   GetChargement({Key key, this.today, this.typeMonth}) : super(key: key);
+
+//   final String today;
+//   final bool typeMonth;
+
+//   @override
+//   _GetChargementState createState() => _GetChargementState();
+// }
+
+// class _GetChargementState extends State<GetChargement> {
+//   Future<List<Chargement>> chargements;
+//   Future<List<Chargement>> save() async {
+//     try {
+//       var res = await http.get(
+//         "https://pfeisetz.herokuapp.com/chargement/",
+//         headers: <String, String>{
+//           'Context-Type': 'application/json;charSet=UTF-8'
+//         },
+//       );
+//       print(res.body);
+
+//       if (res.statusCode == 200) {
+//         // If the server did return a 200 OK response,
+//         // then parse the JSON.
+//         var results = jsonDecode(res.body);
+
+//         List<Chargement> chargements = [];
+
+//         for (var item in results) {
+//           // print('podcat == $item');
+
+//           chargements.add(Chargement.fromMap(item));
+//         }
+
+//         return chargements;
+//       } else {
+//         throw Exception('fail');
+//       }
+
+//        //  Listtrow<Chargement> chargements = [];
+//     //final parsed = json.decode(res.body).cast<Map<String, dynamic>>();
+//       //  return parsed.map<Chargement>((json) =>Chargement.fromMap(json)).toList();
+
+//     } catch (e) {
+//       print('Errorrr =>  ${e.toString()}');
+
+//       throw e;
+//     }
+//   }
+
+//   @override
+//   void initState() {
+//     // TODO: implement initState
+//     super.initState();
+//     chargements = save();
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     String  dateToday = DateTime.now().toString();
+//     return FutureBuilder<List<Chargement>>(
+//       future: chargements,
+//       builder: (context, snapshot) {
+//         if (snapshot.hasError) print(snapshot.error);
+//         if (!snapshot.hasData)
+//           return Center(child: CircularProgressIndicator());
+
+//         print('snapshot ==>> ${snapshot.data}');
+//         // String todayDate = widget.typeMonth == false
+//         //     ? dateToday.toString().substring(0, 10)
+//         //     : dateToday.toString().substring(0, 7);
+//         return ListView.builder(
+//           shrinkWrap: true,
+//           itemCount: snapshot.data.length,
+//           itemBuilder: (context, int index) {
+//             Chargement chargement = snapshot.data[index];
+//             String chargementDate = widget.typeMonth == false
+//                 ? chargement.datechargementChar.substring(0, 10)
+//                 : chargement.datechargementChar.substring(0, 7);
+//             if (chargementDate == dateToday) {
+//               return Container(
+//                 height: 50,
+//                 child: Column(children: [
+//                   Text(chargement.snC),
+//                   Text(chargement.snPDA),
+//                   Text(chargement.datechargementChar),
+//                   Text(chargement.datechargementChar)
+//                 ]),
+//               );
+//             } else {
+//               print('aaaaaaaaaaaaaaaaaaaaaaa');
+//               return SizedBox(height: 0);
+//             }
+
+//             return Text(chargement.snC.toString());
+//           },
+//         );
+
+//         // return the ListView widget :
+//       },
+//     );
+//   }
+// }

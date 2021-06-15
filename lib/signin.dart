@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/foundation.dart';
@@ -23,7 +24,7 @@ class _SigninState extends State<Signin> {
   String notif = '';
   Future<String> save(mat, password) async {
     try {
-      var res = await http.post("https://pfeapis.herokuapp.com/user/login",
+      var res = await http.post("https://pfeisetz.herokuapp.com/user/login",
           headers: <String, String>{
             'Context-Type': 'application/json;charSet=UTF-8'
           },
@@ -31,9 +32,13 @@ class _SigninState extends State<Signin> {
             'matriculeUser': mat,
             'passUser': password,
           });
-
+      log(res.body);
       if (res.statusCode == 200) {
-        String role = jsonDecode(res.body)['roleUser'];
+       SharedPreferences prefs = await SharedPreferences.getInstance();
+          var userData = jsonDecode(res.body)['userData'];
+          await prefs.setString('userData', jsonEncode(userData));
+
+        String role = jsonDecode(res.body)['userData']['roleUser'];
         return role;
       }
 
@@ -50,7 +55,7 @@ class _SigninState extends State<Signin> {
     //    context, new MaterialPageRoute(builder: (context) => MyApp2()));
   }
 
-  User user = User('', '', '');
+  User user = User('', '', '', '', '');
 
   Future<String> _showDialog(ress) async => showDialog(
         context: context,
@@ -61,7 +66,7 @@ class _SigninState extends State<Signin> {
             actions: <Widget>[
               // usually buttons at the bottom of the dialog
               new FlatButton(
-                child: new Text("Close"),
+                child: new Text("Fermer"),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
@@ -88,7 +93,7 @@ class _SigninState extends State<Signin> {
           alignment: Alignment.center,
           child: Form(
             key: _formKey,
-            child: SingleChildScrollView(
+            child:new SingleChildScrollView(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -202,7 +207,6 @@ class _SigninState extends State<Signin> {
                               String role = await save(
                                   _emailController.text, _passController.text);
                               if (role != null && role != 'Admin') {
-
                                 SharedPreferences prefs =
                                     await SharedPreferences.getInstance();
                                 String token = prefs.getString(role);
