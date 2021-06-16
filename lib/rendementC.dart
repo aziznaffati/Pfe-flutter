@@ -317,6 +317,7 @@ class _RendementCPage extends State<RendementCPage> {
                       //     ? dateToday.toString().substring(0, 10)
                       //     : dateToday.toString().substring(0, 7);
                       return ListView.builder(
+                        
                         shrinkWrap: true,
                         itemCount: snapshot.data.length,
                         itemBuilder: (context, int index) {
