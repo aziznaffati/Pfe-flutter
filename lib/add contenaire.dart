@@ -210,7 +210,7 @@ _showDialog(results);
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Text('status:${chariot.statuChar}',
+                                      Text('Statut:${chariot.statuChar}',
                                           style: TextStyle(
                                               color: Colors.white, fontSize: 20)),
                                      

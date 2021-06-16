@@ -65,7 +65,7 @@ class _CharPage extends State<CharPage> {
   Future<dynamic> subC(snc) async {
     try {
       Map<String, dynamic> body = {
-        'statuChar': "Chariot On Stock ",
+        'statuChar': "Chariot en Stock ",
       };
       var resl = await http.patch("https://pfeisetz.herokuapp.com/chariot/$snc",
           headers: <String, String>{

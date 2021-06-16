@@ -241,7 +241,7 @@ class _MyHomePageState extends State<MyHomePage> {
               Container(
                 alignment: Alignment.topCenter,
                 child: Text(
-                  "Vous êtes identifier par le matricule : ${userData['matriculeUser']}",
+                  "Vous êtes identifié par le matricule : ${userData['matriculeUser']}",
                   style: GoogleFonts.pacifico(
                       fontWeight: FontWeight.bold,
                       fontSize: 35,
@@ -381,7 +381,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                         ListTile(
                           title: Text(
-                            "Liste Chariots on Stock",
+                            "Liste Chariots en Stock",
                             style: TextStyle(
                               fontFamily: "ProductSans",
                             ),

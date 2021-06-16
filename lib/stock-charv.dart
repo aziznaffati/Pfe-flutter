@@ -154,7 +154,7 @@ class _GestionStockvPage extends State<GestionStockvPage> {
                                     ],
                                   ),
                                   SizedBox(height: 15),
-                                  Text('status: ${chariot.statuChar}',
+                                  Text('Statut: ${chariot.statuChar}',
                                       style: TextStyle(
                                           color: Colors.white, fontSize: 20)),
                                 ]),

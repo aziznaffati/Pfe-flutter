@@ -96,7 +96,7 @@ String heure = '';
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text(
-          "Liste Chariots on Stock",
+          "Liste Chariots en Stock",
           style: TextStyle(
             fontFamily: "ProductSans",
           ),
@@ -122,7 +122,7 @@ String heure = '';
                 return Column(
                   children: [
                     Container(
-                        child: Text('Les chariots On Stock: ${snapshot.data.length}',
+                        child: Text('Les chariots en Stock: ${snapshot.data.length}',
                             style: TextStyle(
                               color: Colors.blue,
                               fontSize: 20,

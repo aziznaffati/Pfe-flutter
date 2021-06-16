@@ -171,7 +171,7 @@ _showDialog('Numéro de série Produit existe déja' );
                               controller: maxembalageC,
                               decoration: InputDecoration(
                                   fillColor: Color(0xFF2196F3),
-                                  hintText: "Max Embalage Cartoon"),
+                                  hintText: "Max emballage Cartoon"),
                               keyboardType: TextInputType.number,
                               inputFormatters: <TextInputFormatter>[
                                 FilteringTextInputFormatter.digitsOnly
@@ -184,7 +184,7 @@ _showDialog('Numéro de série Produit existe déja' );
                               controller: maxembalageSH,
                               decoration: InputDecoration(
                                   fillColor: Color(0xFF2196F3),
-                                  hintText: "Max Embalage Sashet"),
+                                  hintText: "Max emballage sachet"),
                               keyboardType: TextInputType.number,
                               inputFormatters: <TextInputFormatter>[
                                 FilteringTextInputFormatter.digitsOnly

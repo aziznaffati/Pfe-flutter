@@ -161,7 +161,7 @@ _showDialog("Numéro de série Produit n'existe pas" );
                               controller: maxembalageC,
                               decoration: InputDecoration(
                                   fillColor: Color(0xFF2196F3),
-                                  hintText: "Max Embalage Cartoon: ${widget.mxc}"),
+                                  hintText: "Max emballage carton: ${widget.mxc}"),
                               keyboardType: TextInputType.number,
                               inputFormatters: <TextInputFormatter>[
                                 FilteringTextInputFormatter.digitsOnly
@@ -174,7 +174,7 @@ _showDialog("Numéro de série Produit n'existe pas" );
                               controller: maxembalageSH,
                               decoration: InputDecoration(
                                   fillColor: Color(0xFF2196F3),
-                                  hintText: "Max Embalage Sashet: ${widget.mxsh}"),
+                                  hintText: "Max emballage sachet: ${widget.mxsh}"),
                               keyboardType: TextInputType.number,
                               inputFormatters: <TextInputFormatter>[
                                 FilteringTextInputFormatter.digitsOnly

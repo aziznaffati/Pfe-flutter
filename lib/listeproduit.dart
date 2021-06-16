@@ -222,11 +222,11 @@ String mxsh = '';
                                         )
                                       ],
                                     ),
-                                    Text('Quantité on stock: ${produit.qtestock}',
+                                    Text('Quantité en stock: ${produit.qtestock}',
                                         style: TextStyle(
                                             color: Colors.white, fontSize: 20)),
                                     Text(
-                                        'Max Quantité on Cartoon Par Chariot: ${produit.maxembalageC}',
+                                        'Max Quantité en carton Par Chariot: ${produit.maxembalageC}',
                                         style: TextStyle(
                                             color: Colors.white, fontSize: 20)),
                                     Row(
@@ -234,7 +234,7 @@ String mxsh = '';
                                           MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
-                                            'Max Quantité on  Sashet: ${produit.maxembalageSH}',
+                                            'Max Quantité en sachet: ${produit.maxembalageSH}',
                                             style: TextStyle(
                                                 color: Colors.white, fontSize: 20)),
                                       FloatingActionButton(
