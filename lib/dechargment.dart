@@ -237,7 +237,7 @@ var resl = await http.patch(
                                   padding: EdgeInsets.all(8.0),
                                   splashColor: Color(0xFF2196F3),
                                   child: Text(
-                                    "Déchargement",
+                                    "Décharger",
                                     style: TextStyle(
                                       fontFamily: "ProductSans",
                                     ),

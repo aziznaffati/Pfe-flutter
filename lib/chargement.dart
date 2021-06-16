@@ -228,7 +228,7 @@ class _CharPage extends State<CharPage> {
                                   padding: EdgeInsets.all(8.0),
                                   splashColor: Color(0xFF2196F3),
                                   child: Text(
-                                    "Chargement",
+                                    "Charger",
                                     style: TextStyle(
                                       fontFamily: "ProductSans",
                                     ),
