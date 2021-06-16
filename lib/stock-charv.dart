@@ -130,7 +130,7 @@ class _GestionStockvPage extends State<GestionStockvPage> {
                         Chariot chariot = snapshot.data[index];
                         // String chariotDate = chariot.datechargementChar.toString().substring(0, 10);
 
-                        if (chariot != null && chariot.statuChar=='Chariot vide') {
+                        if (chariot != null && chariot.statuChar=='Chariot Vide') {
                           return Container(
                             // height: 50,
                             decoration: BoxDecoration(

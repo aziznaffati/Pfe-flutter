@@ -151,7 +151,7 @@ String heure = '';
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Text('snc: ${contenaire.snC}',
+                                      Text('Num de série Chariot: ${contenaire.snC}',
                                           style: TextStyle(
                                               color: Colors.white,
                                               fontSize: 20)),
@@ -173,7 +173,7 @@ String heure = '';
                                     ],
                                   ),
                                     
-                                  Text('status: ${contenaire.nserieProduit}',
+                                  Text('Num de série Produit: ${contenaire.nserieProduit}',
                                       style: TextStyle(
                                           color: Colors.white, fontSize: 20)),
                                            Text('Quantité Charger: ${contenaire.qtechar}',

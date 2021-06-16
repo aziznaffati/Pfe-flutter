@@ -88,7 +88,7 @@ class _CharPage extends State<CharPage> {
   final quantite = TextEditingController();
 
   OverlayEntry overlayEntry;
-  String bar = 'Reference Chariot';
+  String bar = 'Référence Chariot';
   String barcode = 'Unknown';
   String notif = '';
 

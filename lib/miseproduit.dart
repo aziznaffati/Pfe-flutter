@@ -44,7 +44,7 @@ class _MisePage extends State<MisePage> {
             print('resss${res.body}' );
        _showDialog('Mise à jour fait avec Succes');
       }else{
-_showDialog("Numéro de serie Produit n'existe pas" );
+_showDialog("Numéro de série Produit n'existe pas" );
           }
       
          

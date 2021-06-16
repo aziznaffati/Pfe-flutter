@@ -172,14 +172,14 @@ class _RecPage extends State<RecPage> {
                           ),
                           Row(
                             children: [
-                              Text('Date Remplire Chariot: ${widget.date}',
+                              Text('Date Remplir Chariot: ${widget.date}',
                                   style: TextStyle(
                                       fontSize: 16, fontFamily: "ProductSans")),
                             ],
                           ),
                           Row(
                             children: [
-                              Text('Heure Remplire Chariot: ${widget.heure}',
+                              Text('Heure Remplir Chariot: ${widget.heure}',
                                   style: TextStyle(
                                       fontSize: 16, fontFamily: "ProductSans")),
                             ],

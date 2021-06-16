@@ -350,12 +350,12 @@ class _RendementCPage extends State<RendementCPage> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                          'Num de serie Chariot: ${chargement.snC}',
+                                          'Num de série Chariot: ${chargement.snC}',
                                           style: TextStyle(
                                               color: Colors.white,
                                               fontSize: 20)),
                                       Text(
-                                          'Num de serie PDA: ${chargement.snPDA}',
+                                          'Num de série PDA: ${chargement.snPDA}',
                                           style: TextStyle(
                                               color: Colors.white,
                                               fontSize: 20)),

@@ -29,7 +29,7 @@ class _MisCPage extends State<MisCPage> {
           });
       print('resss${result.body}');
       if (result.body == 'null') {
-        _showDialog("Numéro de serie Chariot n'existe pas");
+        _showDialog("Numéro de série Chariot n'existe pas");
       } else {
         var resulta = await http.get(
             'https://pfeisetz.herokuapp.com/produit/$snp',
@@ -51,7 +51,7 @@ class _MisCPage extends State<MisCPage> {
           print(res.body);
           _showDialog("Mise à jour fait avec Succes");
         } else {
-          _showDialog("Numéro de serie Produit n'existe pas");
+          _showDialog("Numéro de série Produit n'existe pas");
         }
       }
 

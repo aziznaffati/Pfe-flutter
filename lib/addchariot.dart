@@ -43,7 +43,7 @@ class _AddChPage extends State<AddChPage> {
       
        _showDialog('Ajout fait avec Succés');
       }else{
-_showDialog('Numéro de serie Chariot existe déja' );
+_showDialog('Numéro de série Chariot existe déja' );
           }
       
          

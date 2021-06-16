@@ -45,7 +45,7 @@ class _AddPage extends State<AddPage> {
       
        _showDialog('Ajout fait avec Succés');
       }else{
-_showDialog('Numéro de serie Produit existe déja' );
+_showDialog('Numéro de série Produit existe déja' );
           }
       
          

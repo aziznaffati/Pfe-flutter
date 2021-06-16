@@ -167,14 +167,14 @@ class _MyHomePageState extends State<MyHomePage> {
       builder: (BuildContext context) {
         return SimpleDialog(
           title: Text(
-            "Reclamation de Panne",
+            "Réclamation de Panne",
             style: TextStyle(fontFamily: "ProductSans", color: Colors.blue),
           ),
           children: <Widget>[
             
             Container(
               margin: EdgeInsets.all(15),
-              child: Text("Veuillez passer votre reclamation "),
+              child: Text("Veuillez passer votre réclamation "),
             ),
             Container(
                 margin: EdgeInsets.all(15),

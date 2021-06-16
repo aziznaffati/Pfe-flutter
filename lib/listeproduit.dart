@@ -201,7 +201,7 @@ String mxsh = '';
                                           MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
-                                            'Num de serie Produit: ${produit.nserieProduit}',
+                                            'Num de série Produit: ${produit.nserieProduit}',
                                             style: TextStyle(
                                                 color: Colors.white,
                                                 fontSize: 20)),
