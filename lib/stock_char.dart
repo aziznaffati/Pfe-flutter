@@ -96,7 +96,7 @@ String heure = '';
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text(
-          "Gestion des Chariots On Stock",
+          "Liste Chariots on Stock",
           style: TextStyle(
             fontFamily: "ProductSans",
           ),

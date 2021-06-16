@@ -171,16 +171,17 @@ class _MyHomePageState extends State<MyHomePage> {
             style: TextStyle(fontFamily: "ProductSans", color: Colors.blue),
           ),
           children: <Widget>[
+            
             Container(
               margin: EdgeInsets.all(15),
-              child: Text(userData['roleUser']),
+              child: Text("Veuillez passer votre reclamation "),
             ),
             Container(
                 margin: EdgeInsets.all(15),
                 child: TextField(
                   controller: typepanne,
                   decoration: InputDecoration(
-                      fillColor: Colors.blue, hintText: "Type panne"),
+                      fillColor: Colors.blue, hintText: "Sujet panne"),
                 )),
             Container(
               alignment: Alignment.bottomCenter,
@@ -198,7 +199,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 padding: EdgeInsets.all(8.0),
                 splashColor: Colors.blue,
                 child: Text(
-                  "Envoyer",
+                  "Valider",
                   style: TextStyle(
                     fontFamily: "ProductSans",
                   ),
@@ -240,10 +241,10 @@ class _MyHomePageState extends State<MyHomePage> {
               Container(
                 alignment: Alignment.topCenter,
                 child: Text(
-                  "Bienvenue",
+                  "Vous êtes identifier par le matricule : ${userData['matriculeUser']}",
                   style: GoogleFonts.pacifico(
                       fontWeight: FontWeight.bold,
-                      fontSize: 50,
+                      fontSize: 35,
                       color: Colors.blue),
                 ),
               )
@@ -263,7 +264,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         child: Image.asset('images/logo.png')),
                     ListTile(
                       title: Text(
-                        "Remplire Chariot",
+                        "Remplir Chariot",
                         style: TextStyle(
                           fontFamily: "ProductSans",
                         ),
@@ -295,7 +296,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                     ListTile(
                       title: Text(
-                        "Les vide Chariots",
+                        "Liste Chariots Disponible",
                         style: TextStyle(
                           fontFamily: "ProductSans",
                         ),
@@ -380,7 +381,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                         ListTile(
                           title: Text(
-                            "Les Chariots On Stock",
+                            "Liste Chariots on Stock",
                             style: TextStyle(
                               fontFamily: "ProductSans",
                             ),

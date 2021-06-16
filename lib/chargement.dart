@@ -10,8 +10,8 @@ import 'package:month_picker_dialog/month_picker_dialog.dart';
 import 'auth/authProvider.dart';
 
 class CharPage extends StatefulWidget {
-final  String snPDA;
-CharPage({this.snPDA});
+  final String snPDA;
+  CharPage({this.snPDA});
   @override
   _CharPage createState() => _CharPage();
 }
@@ -27,15 +27,13 @@ class _CharPage extends State<CharPage> {
   DateTime statD = DateTime.now();
   DateTime statM = DateTime.now();
 
-  Future<dynamic> submit(snc, date,heure) async {
+  Future<dynamic> submit(snc, date, heure) async {
     try {
-      
       Map<String, String> body = {
         'snC': snc,
         'snPDA': widget.snPDA,
         'datechargementChar': date,
         'heure_ch': heure,
-        
       };
 
       print('body ==> $body');
@@ -64,36 +62,28 @@ class _CharPage extends State<CharPage> {
     }
   }
 
-Future<dynamic> subC( snc) async {
+  Future<dynamic> subC(snc) async {
     try {
       Map<String, dynamic> body = {
-              
-              'statuChar': "Chariot On Stock ",
-             
-            };
-var resl = await http.patch(
-                "https://pfeisetz.herokuapp.com/chariot/$snc",
-                headers: <String, String>{
-                  'Context-Type': 'application/json;charSet=UTF-8'
-                }, body: body);
-            print('reslllp ==>${resl.body}');
-            if (resl.statusCode != 200) {
-              String message = jsonDecode(resl.body)['message'];
-              _showDialog(message);
-              return 'fail11';
-            }
-            // print(res.body);
-            return 'Seccess';
-          
-       
-
-
+        'statuChar': "Chariot On Stock ",
+      };
+      var resl = await http.patch("https://pfeisetz.herokuapp.com/chariot/$snc",
+          headers: <String, String>{
+            'Context-Type': 'application/json;charSet=UTF-8'
+          },
+          body: body);
+      print('reslllp ==>${resl.body}');
+      if (resl.statusCode != 200) {
+        String message = jsonDecode(resl.body)['message'];
+        _showDialog(message);
+        return 'fail11';
+      }
+      // print(res.body);
+      return 'Seccess';
     } catch (e) {
       return 'Fail';
     }
   }
-
-
 
   final quantite = TextEditingController();
 
@@ -124,6 +114,8 @@ var resl = await http.patch(
   @override
   Widget build(BuildContext context) {
     DateTime today = new DateTime.now();
+    String todayDate = today.toString().substring(0, 10);
+    String heure = today.toString().substring(11, 16);
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -139,7 +131,7 @@ var resl = await http.patch(
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15)),
                 elevation: 25,
-                child:new SingleChildScrollView(
+                child: new SingleChildScrollView(
                   child: Container(
                     padding: EdgeInsets.symmetric(
                         horizontal: 20,
@@ -175,8 +167,30 @@ var resl = await http.patch(
                               ),
                             ],
                           ),
-                         
-                          
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('Numéro de série PDA: ${widget.snPDA}',
+                                  style: TextStyle(
+                                      fontSize: 16, fontFamily: "ProductSans")),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('Date Chargement: ${todayDate}',
+                                  style: TextStyle(
+                                      fontSize: 16, fontFamily: "ProductSans")),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('Heure Chargement: ${heure}',
+                                  style: TextStyle(
+                                      fontSize: 16, fontFamily: "ProductSans")),
+                            ],
+                          ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
@@ -184,14 +198,13 @@ var resl = await http.patch(
                                   onPressed: () {
                                     setState(() {
                                       bar = 'Numéro de série Chariot';
-                                      
                                     });
                                   },
                                   textColor: Color(0xFF2196F3),
                                   padding: EdgeInsets.all(8.0),
                                   splashColor: Color(0xFF2196F3),
                                   child: Text(
-                                    "EFFACER",
+                                    "Annuler",
                                     style: TextStyle(
                                       fontFamily: "ProductSans",
                                     ),
@@ -201,9 +214,9 @@ var resl = await http.patch(
                                     print(today);
                                     String todayDate =
                                         today.toString().substring(0, 10);
-                                        String heure =
+                                    String heure =
                                         today.toString().substring(11, 16);
-                                    submit(bar, todayDate,heure);
+                                    submit(bar, todayDate, heure);
                                     subC(bar);
                                     print(todayDate);
                                     print(heure);

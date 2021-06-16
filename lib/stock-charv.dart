@@ -91,7 +91,7 @@ class _GestionStockvPage extends State<GestionStockvPage> {
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text(
-          "Gestion des Chariots Vide",
+          "Liste Chariots Disponible",
           style: TextStyle(
             fontFamily: "ProductSans",
           ),

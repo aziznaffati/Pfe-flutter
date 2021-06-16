@@ -124,6 +124,8 @@ var resl = await http.patch(
   @override
   Widget build(BuildContext context) {
     DateTime today = new DateTime.now();
+    String todayDate = today.toString().substring(0, 10);
+    String heure = today.toString().substring(11, 16);
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -175,7 +177,30 @@ var resl = await http.patch(
                               ),
                             ],
                           ),
-                         
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('Numéro de série PDA: ${widget.snPDA}',
+                                  style: TextStyle(
+                                      fontSize: 16, fontFamily: "ProductSans")),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('Date Chargement: ${todayDate}',
+                                  style: TextStyle(
+                                      fontSize: 16, fontFamily: "ProductSans")),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('Heure Chargement: ${heure}',
+                                  style: TextStyle(
+                                      fontSize: 16, fontFamily: "ProductSans")),
+                            ],
+                          ),
                           
                           Row(
                             mainAxisAlignment: MainAxisAlignment.end,
@@ -191,7 +216,7 @@ var resl = await http.patch(
                                   padding: EdgeInsets.all(8.0),
                                   splashColor: Color(0xFF2196F3),
                                   child: Text(
-                                    "EFFACER",
+                                    "Annuler",
                                     style: TextStyle(
                                       fontFamily: "ProductSans",
                                     ),
